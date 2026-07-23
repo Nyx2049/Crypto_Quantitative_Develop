@@ -29,6 +29,7 @@ it("ships the browser-direct official API scanner", () => {
 });
 
 it("labels strategy 1.0 and sorts both angle directions by distance from zero", () => {
+  expect(PAGE).toContain("零度雷达 ZeroSlope");
   expect(PAGE).toContain("策略适配币对 1.0");
   expect(PAGE).toContain("Math.abs(a.angle10)-Math.abs(b.angle10)");
   expect(PAGE).toContain("按 10 根 EMA99 角度绝对值升序");
@@ -40,6 +41,9 @@ it("keeps the three first-row watch pairs in one editable configuration", () => 
   );
   expect(PAGE).toContain("grid-template-columns:repeat(3");
   expect(PAGE).toContain("当前不在币安 USDT-M 永续交易池或数据不可用");
+  expect(PAGE).toContain("/fapi/v1/ticker/24hr?symbol=");
+  expect(PAGE).toContain("/fapi/v1/premiumIndex?symbol=");
+  expect(PAGE).toContain("正在独立获取固定 TradFi 合约");
 });
 
 it("calculates standardized percent slope angle", () => {
