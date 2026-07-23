@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "binance-ema99-scanner",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-23",
+  "observability": { "enabled": true },
+  "vars": {
+    "TOP_N": "20",
+    "EMA_PERIOD": "99",
+    "KLINE_INTERVAL": "4h",
+    "KLINE_LIMIT": "320",
+    "REQUEST_CONCURRENCY": "5",
+  },
+}

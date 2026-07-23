@@ -39,3 +39,14 @@
 
 # debug information files
 *.dwo
+
+# Node / Cloudflare
+node_modules/
+dist/
+.wrangler/
+.wrangler-config/
+.wrangler-log.txt/
+.wrangler-logs/
+.dev.vars
+coverage/
+.npm-cache/
