@@ -85,13 +85,6 @@ export class BinanceClient {
           status: response.status,
           detail: text.slice(0, 240) || response.statusText,
         });
-        if (
-          response.status >= 400 &&
-          response.status < 500 &&
-          response.status !== 418 &&
-          response.status !== 429
-        )
-          break;
       } catch (error) {
         attempts.push({
           baseUrl,

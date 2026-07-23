@@ -9,6 +9,7 @@ import {
   sortTopByQuoteVolume,
 } from "../src/core";
 import { BinanceApiError, BinanceClient, scanMarket } from "../src/binance";
+import { PAGE } from "../src/page";
 
 describe("EMA99", () => {
   it("uses SMA seed then standard EMA recurrence", () => {
@@ -18,6 +19,27 @@ describe("EMA99", () => {
     expect(result[0]).toBe(50);
     expect(result[1]).toBeCloseTo(51, 12);
   });
+});
+
+it("ships the browser-direct official API scanner", () => {
+  expect(PAGE).toContain("scanDirect()");
+  expect(PAGE).toContain("https://fapi4.binance.com");
+  expect(PAGE).toContain("mode:'cors'");
+  expect(PAGE).not.toContain("fetch('/api/scan'");
+});
+
+it("labels strategy 1.0 and sorts both angle directions by distance from zero", () => {
+  expect(PAGE).toContain("策略适配币对 1.0");
+  expect(PAGE).toContain("Math.abs(a.angle10)-Math.abs(b.angle10)");
+  expect(PAGE).toContain("按 10 根 EMA99 角度绝对值升序");
+});
+
+it("keeps the three first-row watch pairs in one editable configuration", () => {
+  expect(PAGE).toContain(
+    "const PINNED_PAIRS=[{label:'比特币',symbol:'BTCUSDT'},{label:'纳指 QQQ',symbol:'QQQUSDT'},{label:'海力士',symbol:'SKHYNIXUSDT'}]",
+  );
+  expect(PAGE).toContain("grid-template-columns:repeat(3");
+  expect(PAGE).toContain("当前不在币安 USDT-M 永续交易池或数据不可用");
 });
 
 it("calculates standardized percent slope angle", () => {
@@ -90,6 +112,18 @@ it("preserves official endpoint failure details", async () => {
     expect(error.attempts[0]).toMatchObject({ status: 429 });
     expect(error.message).toContain("rate limited");
   });
+});
+
+it("tries every official fallback after a 403 response", async () => {
+  const fetcher = vi.fn(async () => new Response("Forbidden", { status: 403 }));
+  const client = new BinanceClient(fetcher as typeof fetch);
+  await client.get("/fapi/v1/ticker/24hr").catch((error: BinanceApiError) => {
+    expect(error.attempts).toHaveLength(5);
+    expect(error.attempts.every((attempt) => attempt.status === 403)).toBe(
+      true,
+    );
+  });
+  expect(fetcher).toHaveBeenCalledTimes(5);
 });
 
 it("does not require a receiver-bound fetch implementation", async () => {
