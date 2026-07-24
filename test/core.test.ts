@@ -112,13 +112,18 @@ it("keeps the fixed watch pairs in one editable configuration", () => {
   expect(PAGE).toContain("正在获取币圈合约与 TradFi 成交额");
 });
 
-it("builds a balanced 10 crypto plus 10 TradFi strategy pool", () => {
+it("excludes held base assets and backfills the 20 candidate slots by volume", () => {
   expect(PAGE).toContain("const TRADFI_PAIRS=");
   expect(PAGE).toContain("cryptoEligible");
+  expect(PAGE).toContain("function baseKey(symbol)");
+  expect(PAGE).toContain("replace(/(USDT|USDC)$/");
+  expect(PAGE).toContain("heldBases.has(baseKey(x.symbol))");
   expect(PAGE).toContain("cryptoRows=");
   expect(PAGE).toContain(".slice(0,10),stockRows=");
+  expect(PAGE).toContain("fallbackRows=");
+  expect(PAGE).toContain("20-cryptoRows.length-stockRows.length");
   expect(PAGE).toContain(
-    "composition:{crypto:cryptoRows.length,stocks:stockRows.length}",
+    "composition:{crypto:rows.filter(r=>r.marketType==='币圈').length",
   );
 });
 
@@ -135,6 +140,8 @@ it("persists positions locally and evaluates long and short exit rules", () => {
   expect(PAGE).toContain("结构止损价");
   expect(PAGE).toContain("已平仓");
   expect(PAGE).toContain("确认 '+symbol+' 已经平仓");
+  expect(PAGE).toContain("baseKey(row.symbol)");
+  expect(PAGE).toContain("baseKey(symbol)+' · '");
 });
 
 it("shares a versioned position configuration through a self-importing link", () => {
