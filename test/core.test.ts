@@ -163,6 +163,8 @@ it("persists positions locally and evaluates long and short exit rules", () => {
   expect(PAGE).toContain("function positionSummary");
   expect(PAGE).toContain("position-prices");
   expect(PAGE).toContain("entry+' / '+current");
+  expect(PAGE).toContain("position-side");
+  expect(PAGE).toContain("p.side==='short'?'空':'多'");
   expect(PAGE).toContain("positionsExpanded=!positionsExpanded");
 });
 
