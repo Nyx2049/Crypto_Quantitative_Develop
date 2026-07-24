@@ -88,6 +88,11 @@ it("labels the candidate module and sorts both angle directions by distance from
   expect(PAGE).toContain("curveConfirmation");
   expect(PAGE).toContain("前段曲线未确认");
   expect(PAGE).toContain("推荐'+r.recommendedSide");
+  expect(PAGE).toContain("loadDailyBackgrounds");
+  expect(PAGE).toContain("interval=1d");
+  expect(PAGE).toContain("初步牛市背景");
+  expect(PAGE).toContain("初步熊市背景");
+  expect(PAGE).toContain("日线转折/分化");
   expect(PAGE).not.toContain('class="strategy-explain"');
 });
 
