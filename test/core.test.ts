@@ -43,7 +43,17 @@ it("keeps the three first-row watch pairs in one editable configuration", () => 
   expect(PAGE).toContain("当前不在币安 USDT-M 永续交易池或数据不可用");
   expect(PAGE).toContain("/fapi/v1/ticker/24hr?symbol=");
   expect(PAGE).toContain("/fapi/v1/premiumIndex?symbol=");
-  expect(PAGE).toContain("正在独立获取固定 TradFi 合约");
+  expect(PAGE).toContain("正在获取币圈合约与 TradFi 成交额");
+});
+
+it("builds a balanced 10 crypto plus 10 TradFi strategy pool", () => {
+  expect(PAGE).toContain("const TRADFI_PAIRS=");
+  expect(PAGE).toContain("cryptoEligible");
+  expect(PAGE).toContain("cryptoRows=");
+  expect(PAGE).toContain(".slice(0,10),stockRows=");
+  expect(PAGE).toContain(
+    "composition:{crypto:cryptoRows.length,stocks:stockRows.length}",
+  );
 });
 
 it("calculates standardized percent slope angle", () => {

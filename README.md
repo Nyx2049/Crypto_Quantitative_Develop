@@ -31,7 +31,8 @@ Angle10 = atan(SlopePctPerBar) × 180 / π
 ## 页面内容
 
 - 固定关注：比特币、QQQ 和 SK Hynix 独立展示在第一排。
-- 策略适配币对：Angle10 绝对值最小的前 10 个合约。
+- 扫描池：按成交额选择币圈合约 10 个和股票/ETF TradFi 合约 10 个。
+- 策略适配币对：只在上述 20 个合约中按 Angle10 绝对值从小到大排序。
 - 趋势观察：最陡上涨、最陡下跌、加速上涨、加速下降和可能转向。
 - 完整扫描表：默认按 Angle10 距离零度排序，可点击表头重新排序。
 - 市场状态：统计 EMA99 方向、价格相对 EMA99 的位置和趋势扩散程度。
@@ -43,7 +44,7 @@ Angle10 = atan(SlopePctPerBar) × 180 / π
 - 主地址为 `fapi.binance.com`，失败时依次尝试 `fapi1` 至 `fapi4` 官方备用地址。
 - 不需要 Binance API Key，不使用数据库或第三方行情。
 - 扫描 `USDT + PERPETUAL + TRADING` 合约，排除稳定币、杠杆代币和交割合约。
-- 普通币按最近 24 小时 `quoteVolume` 选择高流动性候选，最终展示 Top20。
+- 币圈和股票/ETF TradFi 分别按最近 24 小时 `quoteVolume` 排序，各展示 Top10。
 - 每个合约请求 320 根 4H K线，只计算已经收盘且有效的 K线。
 - 当前价格使用 Mark Price。
 - Open Interest 名义价值按 `Open Interest × Mark Price` 估算。
