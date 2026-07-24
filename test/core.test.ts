@@ -156,8 +156,14 @@ it("persists positions locally and evaluates long and short exit rules", () => {
   expect(PAGE).toContain("结构止损价");
   expect(PAGE).toContain("已平仓");
   expect(PAGE).toContain("确认 '+baseKey(symbol)+' 已经平仓");
-  expect(PAGE).toContain("baseKey(row.symbol)");
-  expect(PAGE).toContain("baseKey(symbol)+' · '");
+  expect(PAGE).toContain("baseKey(row?row.symbol:symbol)");
+  expect(PAGE).toContain("展开全部详情");
+  expect(PAGE).toContain("收起全部详情");
+  expect(PAGE).toContain("positionsExpanded=false");
+  expect(PAGE).toContain("function positionSummary");
+  expect(PAGE).toContain("position-prices");
+  expect(PAGE).toContain("entry+' / '+current");
+  expect(PAGE).toContain("positionsExpanded=!positionsExpanded");
 });
 
 it("shows canonical asset names while keeping full pairs internally", () => {
