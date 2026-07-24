@@ -135,6 +135,14 @@ it("excludes held base assets and backfills the 20 candidate slots by volume", (
   expect(PAGE).toContain("仅合约（现货暂不可用）");
 });
 
+it("excludes stablecoin underlyings from the candidate pool", () => {
+  expect(PAGE).toContain(
+    "stable=new Set(['USDT','USDC','FDUSD','TUSD','BUSD','DAI','USDP','USDE','PYUSD','USD1','USDS','GUSD','RLUSD','EURC','AEUR'])",
+  );
+  expect(PAGE).toContain("!stable.has(cleanSymbol(x.baseAsset))");
+  expect(PAGE).toContain("!stable.has(baseKey(x.symbol))");
+});
+
 it("persists positions locally and evaluates long and short exit rules", () => {
   expect(PAGE).toContain("zeroslope_positions");
   expect(PAGE).toContain("evaluateExitStrategy(p,row)");
