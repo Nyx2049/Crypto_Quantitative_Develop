@@ -28,21 +28,40 @@ it("ships the browser-direct official API scanner", () => {
   expect(PAGE).not.toContain("fetch('/api/scan'");
 });
 
-it("labels strategy 1.0 and sorts both angle directions by distance from zero", () => {
-  expect(PAGE).toContain("零度雷达 ZeroSlope");
-  expect(PAGE).toContain("策略适配币对 1.0");
-  expect(PAGE).toContain("Math.abs(a.angle10)-Math.abs(b.angle10)");
-  expect(PAGE).toContain("按 10 根 EMA99 角度绝对值升序");
+it("ships syntactically valid inline browser JavaScript", () => {
+  const script = PAGE.match(/<script>([\s\S]*)<\/script>/)?.[1];
+  expect(script).toBeTruthy();
+  expect(() => Function(script!)).not.toThrow();
 });
 
-it("keeps the three first-row watch pairs in one editable configuration", () => {
+it("labels the candidate module and sorts both angle directions by distance from zero", () => {
+  expect(PAGE).toContain("零度雷达 ZeroSlope");
+  expect(PAGE).toContain("<h2>候选模块</h2>");
+  expect(PAGE).toContain("EMA99 零度筛选器 1.0");
+  expect(PAGE).toContain("Math.abs(a.angle10)-Math.abs(b.angle10)");
+  expect(PAGE).toContain("前段下跌后穿上 0°");
+  expect(PAGE).toContain("前段上涨后穿下 0°");
+  expect(PAGE).toContain("recommendedSide");
+  expect(PAGE).toContain("suggestedStop");
+  expect(PAGE).toContain("candles.slice(-60)");
+  expect(PAGE).toContain("signal-box");
+  expect(PAGE).toContain("推荐'+r.recommendedSide");
+  expect(PAGE).not.toContain('class="strategy-explain"');
+});
+
+it("keeps the fixed watch pairs in one editable configuration", () => {
   expect(PAGE).toContain(
-    "const PINNED_PAIRS=[{label:'比特币',symbol:'BTCUSDT'},{label:'纳指 QQQ',symbol:'QQQUSDT'},{label:'海力士',symbol:'SKHYNIXUSDT'}]",
+    "const PINNED_PAIRS=[{label:'比特币',symbol:'BTCUSDT'},{label:'纳指 QQQ',symbol:'QQQUSDT'},{label:'黄金',symbol:'XAUUSDT'},{label:'原油',symbol:'CLUSDT'},{label:'韩指 EWY',symbol:'EWYUSDT'}]",
   );
-  expect(PAGE).toContain("grid-template-columns:repeat(3");
+  expect(PAGE).toContain("grid-template-columns:repeat(5");
   expect(PAGE).toContain("当前不在币安 USDT-M 永续交易池或数据不可用");
   expect(PAGE).toContain("/fapi/v1/ticker/24hr?symbol=");
   expect(PAGE).toContain("/fapi/v1/premiumIndex?symbol=");
+  expect(PAGE).toContain("priceChangePercent");
+  expect(PAGE).toContain("pinned-price");
+  expect(PAGE).toContain("24h ");
+  expect(PAGE).toContain(".up,.market-up{color:var(--green)}");
+  expect(PAGE).toContain(".down,.market-down{color:var(--red)}");
   expect(PAGE).toContain("正在获取币圈合约与 TradFi 成交额");
 });
 
@@ -54,6 +73,17 @@ it("builds a balanced 10 crypto plus 10 TradFi strategy pool", () => {
   expect(PAGE).toContain(
     "composition:{crypto:cryptoRows.length,stocks:stockRows.length}",
   );
+});
+
+it("persists positions locally and evaluates long and short exit rules", () => {
+  expect(PAGE).toContain("zeroslope_positions");
+  expect(PAGE).toContain("positionAnalysis(row,p)");
+  expect(PAGE).toContain("twoClosesBelowEma");
+  expect(PAGE).toContain("twoClosesAboveEma");
+  expect(PAGE).toContain("离场检查");
+  expect(PAGE).toContain("结构止损价");
+  expect(PAGE).toContain("已平仓");
+  expect(PAGE).toContain("确认 '+symbol+' 已经平仓");
 });
 
 it("calculates standardized percent slope angle", () => {
