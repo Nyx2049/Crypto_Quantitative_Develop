@@ -87,7 +87,7 @@ const UNDERLYING_ALIASES={AVGOB:'AVGO',BABAB:'BABA',COINB:'COIN',CRCLB:'CRCL',GO
 async function officialGet(path){for(const base of API_BASES){try{const r=await fetch(base+path,{cache:'no-store',mode:'cors'}),text=await r.text();if(r.ok)return JSON.parse(text)}catch{}}throw new Error('合约行情接口暂不可用（已尝试多个官方节点）')}
 async function spotOfficialGet(path){for(const base of SPOT_API_BASES){try{const r=await fetch(base+path,{cache:'no-store',mode:'cors'}),text=await r.text();if(r.ok)return JSON.parse(text)}catch{}}throw new Error('现货行情接口暂不可用（已尝试多个官方节点）')}
 function ema99(values){if(values.length<99)return[];const out=[values.slice(0,99).reduce((a,b)=>a+b,0)/99],alpha=.02;for(let i=99;i<values.length;i++)out.push(values[i]*alpha+out[out.length-1]*(1-alpha));return out}
-function baseKey(symbol){const stripped=cleanSymbol(symbol).replace(/(USDT|USDC)$/,'');return UNDERLYING_ALIASES[stripped]||stripped}
+function baseKey(symbol){const cleaned=cleanSymbol(symbol),stripped=cleaned.replace(/(USDT|USDC)$/,'');return UNDERLYING_ALIASES[stripped]||stripped||cleaned||'未知资产'}
 function angle(now,old,n){return Math.atan(((now/old-1)*100)/n)*180/Math.PI}
 function trend(a){return a>=.3?'强势上涨':a>=.1?'温和上涨':a>-.1?'基本走平':a>-.3?'温和下降':'强势下降'}
 function momentum(a5,a10,a20){if(a5>a10&&a10>a20&&a20>0)return'加速上涨';if(a20>a10&&a10>a5&&a10>0)return'上涨减速';if(a5<a10&&a10<a20&&a20<0)return'加速下降';if(a20<a10&&a10<a5&&a10<0)return'下降减速';return'方向混乱'}

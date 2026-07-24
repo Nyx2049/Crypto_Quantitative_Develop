@@ -163,6 +163,7 @@ it("shows canonical asset names while keeping full pairs internally", () => {
   expect(PAGE).toContain("baseKey(x.symbol)");
   expect(PAGE).toContain("openPosition(&quot;'+r.symbol");
   expect(PAGE).not.toContain("['symbol','交易对']");
+  expect(PAGE).toContain("stripped||cleaned||'未知资产'");
 });
 
 it("shares a versioned position configuration through a self-importing link", () => {
