@@ -1,11 +1,11 @@
 # Candidate Card Design QA
 
-- Source visual truth: `/var/folders/6q/j4xd86z97sq188g1wd78qfbw0000gn/T/codex-clipboard-d6be08b0-8cdf-4d22-a191-3fb4ebadc950.png`
+- Source visual truth: `/var/folders/6q/j4xd86z97sq188g1wd78qfbw0000gn/T/codex-clipboard-d80ccdc4-a83a-4d63-9344-832663861c7c.png`
 - Implementation screenshots:
   - Desktop: `/private/tmp/zeroslope-ui-after.png`
-  - Mobile: `/private/tmp/zeroslope-ui-mobile.png`
-- Combined comparison: `/private/tmp/zeroslope-ui-comparison.png`
-- Source dimensions: `992 × 232`
+  - Mobile: `/private/tmp/zeroslope-ui-plain-background.png`
+- Combined comparison: `/private/tmp/zeroslope-ui-plain-comparison.png`
+- Source dimensions: `944 × 2048`
 - Desktop viewport and capture: `1280 × 720`, device scale factor 1
 - Mobile viewport and capture: `390 × 844`, device scale factor 1
 - State: loaded candidate list with live Binance data
@@ -13,8 +13,8 @@
 ## Full-view comparison
 
 The revised desktop candidate row uses a stable three-column grid. Symbol, trend
-details, and action begin on the same baseline. The daily background badge remains
-on one line and no longer forces the symbol column to grow vertically. The signal
+details, and action begin on the same baseline. The daily background is rendered
+as plain secondary text without a border, background, or corner radius. The signal
 box has reduced border contrast and a clearer text hierarchy.
 
 At the mobile breakpoint the symbol and action share the first row, while trend
@@ -36,8 +36,8 @@ signal box, and action button.
   baseline; row padding and inter-column gaps are consistent. Mobile rows form a
   predictable two-level layout.
 - Colors and visual tokens: existing dark-green product palette is preserved.
-  Red and green states use softer borders and tinted backgrounds instead of loud
-  outlines.
+  Daily context uses subdued semantic text color rather than an outlined warning
+  treatment.
 - Image quality and assets: this component contains no raster assets or icons.
 - Copy and content: all strategy labels, values, and actions are unchanged.
 
@@ -51,6 +51,9 @@ signal box, and action button.
 3. Post-fix evidence: desktop child elements start at the same y-coordinate,
    background badge computed `white-space` is `nowrap`, and both desktop and
    mobile report no horizontal overflow.
+4. User follow-up identified the outlined pill itself as visually distracting.
+   The context label was changed to plain text with computed `border: none`,
+   transparent background, and `border-radius: 0px`.
 
 ## Findings
 
