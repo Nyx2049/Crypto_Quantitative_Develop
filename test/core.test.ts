@@ -4,8 +4,10 @@ import {
   calculateEma,
   classifyMomentum,
   classifyTrend,
+  confirmPreviousCurve,
   filterClosedCandles,
   isEligibleContract,
+  reversalWithCurve,
   sortTopByQuoteVolume,
 } from "../src/core";
 import { BinanceApiError, BinanceClient, scanMarket } from "../src/binance";
@@ -18,6 +20,44 @@ describe("EMA99", () => {
     expect(result).toHaveLength(2);
     expect(result[0]).toBe(50);
     expect(result[1]).toBeCloseTo(51, 12);
+  });
+});
+
+describe("EMA99 curve confirmation", () => {
+  function buildCurve(priorSteps: number[], currentStep: number): number[] {
+    const values = Array.from({ length: 26 }, () => 100);
+    for (const step of priorSteps)
+      values.push(values.at(-1)! * (1 + step / 100));
+    for (let i = 0; i < 10; i += 1)
+      values.push(values.at(-1)! * (1 + currentStep / 100));
+    return values;
+  }
+
+  it("confirms a persistent smooth prior curve before recommending a reversal", () => {
+    const values = buildCurve(
+      Array.from({ length: 24 }, () => 0.0025),
+      -0.004,
+    );
+    const result = reversalWithCurve(values);
+    expect(result.curve.confirmed).toBe(true);
+    expect(result.curve.direction).toBe("up");
+    expect(result.curve.directionalRatio).toBe(1);
+    expect(result.side).toBe("做空");
+  });
+
+  it("rejects a short countertrend bump inside the larger trend", () => {
+    const values = buildCurve(
+      [
+        ...Array.from({ length: 16 }, () => -0.0005),
+        ...Array.from({ length: 8 }, () => 0.008),
+      ],
+      -0.004,
+    );
+    const curve = confirmPreviousCurve(values);
+    expect(curve.averageAngle).toBeGreaterThan(0.1);
+    expect(curve.directionalRatio).toBeLessThan(0.75);
+    expect(curve.confirmed).toBe(false);
+    expect(reversalWithCurve(values).side).toBe("观望");
   });
 });
 
@@ -37,14 +77,16 @@ it("ships syntactically valid inline browser JavaScript", () => {
 it("labels the candidate module and sorts both angle directions by distance from zero", () => {
   expect(PAGE).toContain("零度雷达 ZeroSlope");
   expect(PAGE).toContain("<h2>候选模块</h2>");
-  expect(PAGE).toContain("EMA99 零度筛选器 1.0");
+  expect(PAGE).toContain("EMA99 零度筛选器 1.1");
   expect(PAGE).toContain("Math.abs(a.angle10)-Math.abs(b.angle10)");
-  expect(PAGE).toContain("前段下跌后穿上 0°");
-  expect(PAGE).toContain("前段上涨后穿下 0°");
+  expect(PAGE).toContain("前段有效曲线下跌后穿上 0°");
+  expect(PAGE).toContain("前段有效曲线上涨后穿下 0°");
   expect(PAGE).toContain("recommendedSide");
   expect(PAGE).toContain("suggestedStop");
   expect(PAGE).toContain("candles.slice(-60)");
   expect(PAGE).toContain("signal-box");
+  expect(PAGE).toContain("curveConfirmation");
+  expect(PAGE).toContain("前段曲线未确认");
   expect(PAGE).toContain("推荐'+r.recommendedSide");
   expect(PAGE).not.toContain('class="strategy-explain"');
 });
@@ -84,6 +126,19 @@ it("persists positions locally and evaluates long and short exit rules", () => {
   expect(PAGE).toContain("结构止损价");
   expect(PAGE).toContain("已平仓");
   expect(PAGE).toContain("确认 '+symbol+' 已经平仓");
+});
+
+it("shares a versioned position configuration through a self-importing link", () => {
+  expect(PAGE).toContain("分享持仓");
+  expect(PAGE).toContain("POSITION_CONFIG_VERSION=1");
+  expect(PAGE).toContain("app:'ZeroSlope'");
+  expect(PAGE).toContain("parsePositionConfig");
+  expect(PAGE).toContain("url.hash='positions='");
+  expect(PAGE).toContain("importSharedPositions()");
+  expect(PAGE).toContain("已从分享链接自动导入");
+  expect(PAGE).not.toContain("导出 JSON");
+  expect(PAGE).not.toContain("导入 JSON");
+  expect(PAGE).not.toContain('type="file"');
 });
 
 it("calculates standardized percent slope angle", () => {

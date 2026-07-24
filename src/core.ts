@@ -2,6 +2,18 @@ export type Trend =
   "强势上涨" | "温和上涨" | "基本走平" | "温和下降" | "强势下降";
 export type Momentum =
   "加速上涨" | "上涨减速" | "加速下降" | "下降减速" | "方向混乱";
+export type ReversalSide = "做多" | "做空" | "观望";
+
+export interface CurveConfirmation {
+  confirmed: boolean;
+  direction: "up" | "down" | "flat";
+  averageAngle: number;
+  peakAngle: number;
+  directionalRatio: number;
+  netChangePct: number;
+  roughness: number;
+  bars: number;
+}
 
 export interface Candle {
   close: number;
@@ -72,6 +84,84 @@ export function angleDegree(
 ): number {
   const slopePctPerBar = ((current / previous - 1) * 100) / bars;
   return (Math.atan(slopePctPerBar) * 180) / Math.PI;
+}
+
+const CURVE_BARS = 24;
+const CURVE_OFFSET = 10;
+const MIN_AVERAGE_ANGLE = 0.1;
+const MIN_PEAK_ANGLE = 0.12;
+const MIN_DIRECTIONAL_RATIO = 0.75;
+const MIN_NET_CHANGE_PCT = 0.04;
+const MAX_ROUGHNESS = 5;
+
+export function confirmPreviousCurve(values: number[]): CurveConfirmation {
+  const end = values.length - CURVE_OFFSET;
+  const start = end - CURVE_BARS - 1;
+  if (start < 0)
+    return {
+      confirmed: false,
+      direction: "flat",
+      averageAngle: 0,
+      peakAngle: 0,
+      directionalRatio: 0,
+      netChangePct: 0,
+      roughness: Infinity,
+      bars: 0,
+    };
+  const segment = values.slice(start, end);
+  const averageAngle = angleDegree(segment.at(-1)!, segment[0], CURVE_BARS);
+  const direction =
+    averageAngle >= MIN_AVERAGE_ANGLE
+      ? "up"
+      : averageAngle <= -MIN_AVERAGE_ANGLE
+        ? "down"
+        : "flat";
+  const slopes = segment
+    .slice(1)
+    .map((value, index) => angleDegree(value, segment[index], 1));
+  const sign = direction === "up" ? 1 : direction === "down" ? -1 : 0;
+  const directionalRatio = sign
+    ? slopes.filter((slope) => slope * sign > 0).length / slopes.length
+    : 0;
+  const peakAngle = Math.max(0, ...slopes.map((slope) => slope * sign));
+  const netChangePct = Math.abs((segment.at(-1)! / segment[0] - 1) * 100);
+  const totalVariation = slopes
+    .slice(1)
+    .reduce((sum, slope, index) => sum + Math.abs(slope - slopes[index]), 0);
+  const roughness = peakAngle > 0 ? totalVariation / peakAngle : Infinity;
+  return {
+    confirmed:
+      sign !== 0 &&
+      directionalRatio >= MIN_DIRECTIONAL_RATIO &&
+      peakAngle >= MIN_PEAK_ANGLE &&
+      netChangePct >= MIN_NET_CHANGE_PCT &&
+      roughness <= MAX_ROUGHNESS,
+    direction,
+    averageAngle,
+    peakAngle,
+    directionalRatio,
+    netChangePct,
+    roughness,
+    bars: CURVE_BARS,
+  };
+}
+
+export function reversalWithCurve(values: number[]): {
+  side: ReversalSide;
+  curve: CurveConfirmation;
+} {
+  const curve = confirmPreviousCurve(values);
+  if (values.length < CURVE_OFFSET + 1) return { side: "观望", curve };
+  const currentAngle = angleDegree(
+    values.at(-1)!,
+    values.at(-CURVE_OFFSET - 1)!,
+    CURVE_OFFSET,
+  );
+  if (curve.confirmed && curve.direction === "down" && currentAngle > 0)
+    return { side: "做多", curve };
+  if (curve.confirmed && curve.direction === "up" && currentAngle < 0)
+    return { side: "做空", curve };
+  return { side: "观望", curve };
 }
 
 export function classifyTrend(angle10: number): Trend {
