@@ -101,7 +101,7 @@ it("keeps the fixed watch pairs in one editable configuration", () => {
     "const PINNED_PAIRS=[{label:'比特币',symbol:'BTCUSDT'},{label:'纳指 QQQ',symbol:'QQQUSDT'},{label:'黄金',symbol:'XAUUSDT'},{label:'原油',symbol:'CLUSDT'},{label:'韩指 EWY',symbol:'EWYUSDT'}]",
   );
   expect(PAGE).toContain("grid-template-columns:repeat(5");
-  expect(PAGE).toContain("当前不在币安 USDⓈ-M 永续交易池或数据不可用");
+  expect(PAGE).toContain("当前不在 USDⓈ-M 永续交易池或数据不可用");
   expect(PAGE).toContain("/fapi/v1/ticker/24hr?symbol=");
   expect(PAGE).toContain("/fapi/v1/premiumIndex?symbol=");
   expect(PAGE).toContain("priceChangePercent");
@@ -109,7 +109,7 @@ it("keeps the fixed watch pairs in one editable configuration", () => {
   expect(PAGE).toContain("24h ");
   expect(PAGE).toContain(".up,.market-up{color:var(--green)}");
   expect(PAGE).toContain(".down,.market-down{color:var(--red)}");
-  expect(PAGE).toContain("正在获取币圈合约与 TradFi 成交额");
+  expect(PAGE).toContain("正在获取币圈合约、现货与 TradFi 成交额");
 });
 
 it("excludes held base assets and backfills the 20 candidate slots by volume", () => {
@@ -154,7 +154,9 @@ it("persists positions locally and evaluates long and short exit rules", () => {
 
 it("shows canonical asset names while keeping full pairs internally", () => {
   expect(PAGE).toContain("计价基准：USDT");
-  expect(PAGE).toContain("Binance USDⓈ-M Mark Price");
+  expect(PAGE).toContain("USDⓈ-M Mark Price");
+  expect(PAGE).not.toContain("行情默认使用 Binance");
+  expect(PAGE).not.toContain("浏览器直连币安");
   expect(PAGE).toContain("['symbol','资产']");
   expect(PAGE).toContain("if(k==='symbol')return baseKey(r[k])");
   expect(PAGE).toContain("baseKey(r.symbol)");
