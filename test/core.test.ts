@@ -101,7 +101,7 @@ it("keeps the fixed watch pairs in one editable configuration", () => {
     "const PINNED_PAIRS=[{label:'比特币',symbol:'BTCUSDT'},{label:'纳指 QQQ',symbol:'QQQUSDT'},{label:'黄金',symbol:'XAUUSDT'},{label:'原油',symbol:'CLUSDT'},{label:'韩指 EWY',symbol:'EWYUSDT'}]",
   );
   expect(PAGE).toContain("grid-template-columns:repeat(5");
-  expect(PAGE).toContain("当前不在币安 USDT-M 永续交易池或数据不可用");
+  expect(PAGE).toContain("当前不在币安 USDⓈ-M 永续交易池或数据不可用");
   expect(PAGE).toContain("/fapi/v1/ticker/24hr?symbol=");
   expect(PAGE).toContain("/fapi/v1/premiumIndex?symbol=");
   expect(PAGE).toContain("priceChangePercent");
@@ -147,9 +147,20 @@ it("persists positions locally and evaluates long and short exit rules", () => {
   expect(PAGE).toContain("1H EMA99");
   expect(PAGE).toContain("结构止损价");
   expect(PAGE).toContain("已平仓");
-  expect(PAGE).toContain("确认 '+symbol+' 已经平仓");
+  expect(PAGE).toContain("确认 '+baseKey(symbol)+' 已经平仓");
   expect(PAGE).toContain("baseKey(row.symbol)");
   expect(PAGE).toContain("baseKey(symbol)+' · '");
+});
+
+it("shows canonical asset names while keeping full pairs internally", () => {
+  expect(PAGE).toContain("计价基准：USDT");
+  expect(PAGE).toContain("Binance USDⓈ-M Mark Price");
+  expect(PAGE).toContain("['symbol','资产']");
+  expect(PAGE).toContain("if(k==='symbol')return baseKey(r[k])");
+  expect(PAGE).toContain("baseKey(r.symbol)");
+  expect(PAGE).toContain("baseKey(x.symbol)");
+  expect(PAGE).toContain("openPosition(&quot;'+r.symbol");
+  expect(PAGE).not.toContain("['symbol','交易对']");
 });
 
 it("shares a versioned position configuration through a self-importing link", () => {
