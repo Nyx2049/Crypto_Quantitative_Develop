@@ -117,6 +117,9 @@ it("excludes held base assets and backfills the 20 candidate slots by volume", (
   expect(PAGE).toContain("cryptoEligible");
   expect(PAGE).toContain("function baseKey(symbol)");
   expect(PAGE).toContain("replace(/(USDT|USDC)$/");
+  expect(PAGE).toContain("UNDERLYING_ALIASES");
+  expect(PAGE).toContain("NVDAB:'NVDA'");
+  expect(PAGE).toContain("TSLAB:'TSLA'");
   expect(PAGE).toContain("heldBases.has(baseKey(x.symbol))");
   expect(PAGE).toContain("cryptoRows=");
   expect(PAGE).toContain(".slice(0,10),stockRows=");
@@ -125,6 +128,11 @@ it("excludes held base assets and backfills the 20 candidate slots by volume", (
   expect(PAGE).toContain(
     "composition:{crypto:rows.filter(r=>r.marketType==='币圈').length",
   );
+  expect(PAGE).toContain("SPOT_API_BASES");
+  expect(PAGE).toContain("/api/v3/ticker/24hr");
+  expect(PAGE).toContain("futuresQuoteVolume+spotQuoteVolume");
+  expect(PAGE).toContain("liquiditySource");
+  expect(PAGE).toContain("仅合约（现货暂不可用）");
 });
 
 it("persists positions locally and evaluates long and short exit rules", () => {
