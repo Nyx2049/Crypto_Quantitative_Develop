@@ -10,5 +10,6 @@
     "KLINE_INTERVAL": "4h",
     "KLINE_LIMIT": "320",
     "REQUEST_CONCURRENCY": "5",
+    "ENABLE_EXIT_STRATEGY": "true",
   },
 }

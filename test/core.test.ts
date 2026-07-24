@@ -119,10 +119,14 @@ it("builds a balanced 10 crypto plus 10 TradFi strategy pool", () => {
 
 it("persists positions locally and evaluates long and short exit rules", () => {
   expect(PAGE).toContain("zeroslope_positions");
-  expect(PAGE).toContain("positionAnalysis(row,p)");
+  expect(PAGE).toContain("evaluateExitStrategy(p,row)");
   expect(PAGE).toContain("twoClosesBelowEma");
   expect(PAGE).toContain("twoClosesAboveEma");
-  expect(PAGE).toContain("离场检查");
+  expect(PAGE).toContain("建议平仓");
+  expect(PAGE).toContain("ATR14");
+  expect(PAGE).toContain("interval=1h");
+  expect(PAGE).toContain("loadHourlyExitSignals");
+  expect(PAGE).toContain("1H EMA99");
   expect(PAGE).toContain("结构止损价");
   expect(PAGE).toContain("已平仓");
   expect(PAGE).toContain("确认 '+symbol+' 已经平仓");
@@ -130,7 +134,7 @@ it("persists positions locally and evaluates long and short exit rules", () => {
 
 it("shares a versioned position configuration through a self-importing link", () => {
   expect(PAGE).toContain("分享持仓");
-  expect(PAGE).toContain("POSITION_CONFIG_VERSION=1");
+  expect(PAGE).toContain("POSITION_CONFIG_VERSION=2");
   expect(PAGE).toContain("app:'ZeroSlope'");
   expect(PAGE).toContain("parsePositionConfig");
   expect(PAGE).toContain("url.hash='positions='");

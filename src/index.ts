@@ -1,5 +1,5 @@
 import { BinanceApiError, BinanceClient, scanMarket } from "./binance";
-import { PAGE } from "./page";
+import { buildPage } from "./page";
 
 interface Env {
   TOP_N?: string;
@@ -7,6 +7,7 @@ interface Env {
   KLINE_INTERVAL?: string;
   KLINE_LIMIT?: string;
   REQUEST_CONCURRENCY?: string;
+  ENABLE_EXIT_STRATEGY?: string;
 }
 
 function getConfig(env: Env) {
@@ -35,7 +36,7 @@ export default {
     if (request.method !== "GET")
       return json({ error: "仅支持 GET 请求" }, 405);
     if (url.pathname === "/")
-      return new Response(PAGE, {
+      return new Response(buildPage(env.ENABLE_EXIT_STRATEGY !== "false"), {
         headers: {
           "content-type": "text/html; charset=utf-8",
           "cache-control": "no-store",
