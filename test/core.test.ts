@@ -112,19 +112,23 @@ it("keeps the fixed watch pairs in one editable configuration", () => {
   expect(PAGE).toContain("正在获取币圈合约、现货与 TradFi 成交额");
 });
 
-it("excludes held base assets and backfills the 20 candidate slots by volume", () => {
+it("scans large-cap assets, excludes holdings, and ranks 20 candidates by zero distance", () => {
   expect(PAGE).toContain("const TRADFI_PAIRS=");
+  expect(PAGE).toContain("const LARGE_CAP_CRYPTO_ASSETS=");
+  expect(PAGE).toContain("'ZEC'");
   expect(PAGE).toContain("cryptoEligible");
+  expect(PAGE).toContain("largeCapCrypto");
   expect(PAGE).toContain("function baseKey(symbol)");
   expect(PAGE).toContain("replace(/(USDT|USDC)$/");
   expect(PAGE).toContain("UNDERLYING_ALIASES");
   expect(PAGE).toContain("NVDAB:'NVDA'");
   expect(PAGE).toContain("TSLAB:'TSLA'");
   expect(PAGE).toContain("heldBases.has(baseKey(x.symbol))");
-  expect(PAGE).toContain("cryptoRows=");
-  expect(PAGE).toContain(".slice(0,10),stockRows=");
-  expect(PAGE).toContain("fallbackRows=");
-  expect(PAGE).toContain("20-cryptoRows.length-stockRows.length");
+  expect(PAGE).toContain(
+    "sort((a,b)=>Math.abs(a.angle10)-Math.abs(b.angle10)).slice(0,20)",
+  );
+  expect(PAGE).toContain("...largeCapCrypto,...tradfiEligible");
+  expect(PAGE).not.toContain("cryptoRows=");
   expect(PAGE).toContain(
     "composition:{crypto:rows.filter(r=>r.marketType==='币圈').length",
   );
