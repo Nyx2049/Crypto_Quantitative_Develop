@@ -77,7 +77,7 @@ it("ships syntactically valid inline browser JavaScript", () => {
 it("labels the candidate module and sorts both angle directions by distance from zero", () => {
   expect(PAGE).toContain("零度雷达 ZeroSlope");
   expect(PAGE).toContain("<h2>候选模块</h2>");
-  expect(PAGE).toContain("EMA99 零度筛选器 1.1");
+  expect(PAGE).toContain("EMA99 零度筛选器 2.0");
   expect(PAGE).toContain("Math.abs(a.angle10)-Math.abs(b.angle10)");
   expect(PAGE).toContain("前段有效曲线下跌后穿上 0°");
   expect(PAGE).toContain("前段有效曲线上涨后穿下 0°");
@@ -87,7 +87,10 @@ it("labels the candidate module and sorts both angle directions by distance from
   expect(PAGE).toContain("signal-box");
   expect(PAGE).toContain("curveConfirmation");
   expect(PAGE).toContain("前段曲线未确认");
-  expect(PAGE).toContain("推荐'+r.recommendedSide");
+  expect(PAGE).toContain("多头候选");
+  expect(PAGE).toContain("回踩已收回");
+  expect(PAGE).toContain("candidate-search");
+  expect(PAGE).toContain("evaluateRetest");
   expect(PAGE).toContain("loadDailyBackgrounds");
   expect(PAGE).toContain("interval=1d");
   expect(PAGE).toContain("初步牛市背景");

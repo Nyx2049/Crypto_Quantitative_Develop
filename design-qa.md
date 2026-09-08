@@ -1,67 +1,34 @@
-# Candidate Card Design QA
+# 零度雷达 2.0 · UI 验证记录
 
-- Source visual truth: `/var/folders/6q/j4xd86z97sq188g1wd78qfbw0000gn/T/codex-clipboard-d80ccdc4-a83a-4d63-9344-832663861c7c.png`
-- Implementation screenshots:
-  - Desktop: `/private/tmp/zeroslope-ui-after.png`
-  - Mobile: `/private/tmp/zeroslope-ui-plain-background.png`
-- Combined comparison: `/private/tmp/zeroslope-ui-plain-comparison.png`
-- Source dimensions: `944 × 2048`
-- Desktop viewport and capture: `1280 × 720`, device scale factor 1
-- Mobile viewport and capture: `390 × 844`, device scale factor 1
-- State: loaded candidate list with live Binance data
+日期：2026-09-08
 
-## Full-view comparison
+## 设计方向
 
-The revised desktop candidate row uses a stable three-column grid. Symbol, trend
-details, and action begin on the same baseline. The daily background is rendered
-as plain secondary text without a border, background, or corner radius. The signal
-box has reduced border contrast and a clearer text hierarchy.
+石墨灰底色、薄荷绿上涨、柔红下跌；使用系统字体，不依赖远程字体或图片。
+持仓保持在顶部。固定关注以可横滑的紧凑行情条展示，候选为独立卡片。
+每张卡片优先显示资产、Mark Price、24h 变化、角度、候选方向与回踩状态。
+结构参考价独立展示，依据和风险折叠；完整扫描表、趋势分组和数据诊断默认折叠。
 
-At the mobile breakpoint the symbol and action share the first row, while trend
-details and the signal box occupy the full second row. The measured document width
-is equal to the viewport width, with no horizontal overflow.
+## 验证方式
 
-## Focused region comparison
+使用真实 Chrome 渲染实际 Worker 输出；行情请求在测试中替换为确定性夹具，
+避免真实市场变动让 UI 测试不稳定。测试夹具仅存在于 e2e 目录，不进入部署包。
 
-The first XAUUSDT candidate row was compared directly because it contains every
-reported issue: a long bearish background label, the trend summary, curve detail,
-signal box, and action button.
+- 320px、390px 手机宽度及 1440px 桌面宽度。
+- 文档无横向溢出；固定行情条允许内部横滑。
+- 首次打开自动扫描，重复扫描可用，失败后按钮恢复。
+- 单标的数据失败不抹掉其余结果，诊断展示真实接口状态。
+- 搜索候选、添加持仓、刷新本地持仓、展开详情和已平仓删除。
+- 浏览器脚本无未捕获异常；不是仅检查字符串语法。
+- 保留键盘焦点样式、方向文字、状态播报及减少动态效果设置。
 
-## Required fidelity surfaces
+## 复现与截图
 
-- Fonts and typography: system font hierarchy is consistent; symbol and action
-  remain visually dominant, supporting details are quieter, and badge copy does
-  not wrap.
-- Spacing and layout rhythm: all three desktop columns share the same starting
-  baseline; row padding and inter-column gaps are consistent. Mobile rows form a
-  predictable two-level layout.
-- Colors and visual tokens: existing dark-green product palette is preserved.
-  Daily context uses subdued semantic text color rather than an outlined warning
-  treatment.
-- Image quality and assets: this component contains no raster assets or icons.
-- Copy and content: all strategy labels, values, and actions are unchanged.
+先运行 `npm run dev`，再运行 `npm run test:browser`。
+完整页面及候选视口截图生成在 `test-results/`（不提交生成物）。
+`e2e/dashboard.spec.ts` 是持续回归入口。
 
-## Comparison history
+## 边界
 
-1. Initial source: the 80 px symbol column wrapped “初步熊市背景” onto two lines;
-   column heights and baselines diverged; signal borders competed with primary
-   trend information.
-2. Fix: introduced a 150 px desktop symbol track, no-wrap semantic badge, aligned
-   grid items, lower-contrast signal styling, and a dedicated mobile grid.
-3. Post-fix evidence: desktop child elements start at the same y-coordinate,
-   background badge computed `white-space` is `nowrap`, and both desktop and
-   mobile report no horizontal overflow.
-4. User follow-up identified the outlined pill itself as visually distracting.
-   The context label was changed to plain text with computed `border: none`,
-   transparent background, and `border-radius: 0px`.
-
-## Findings
-
-No actionable P0, P1, or P2 issues remain in the candidate card.
-
-## Follow-up polish
-
-- P3: consider adding a compact density preference only if the candidate list
-  grows substantially beyond the current 20 rows.
-
-final result: passed
+Chrome 手机视口不等同于真机 Safari；不同设备的官方 API 连通性仍取决于其网络。
+截图中的合成数据只验证界面和流程，不代表实时行情、策略回测或收益表现。

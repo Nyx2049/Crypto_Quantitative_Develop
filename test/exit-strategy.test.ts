@@ -26,6 +26,18 @@ const market = (overrides: Partial<ExitMarket> = {}): ExitMarket => ({
 const long: ExitPosition = { side: "long", entry: 100, stop: 90 };
 
 describe("持仓退出策略 1.0", () => {
+  it("uses entry-price denominator for linear USDT short PnL", () => {
+    const short: ExitPosition = { side: "short", entry: 100, stop: 110 };
+    const result = evaluateExitStrategy(short, market({ markPrice: 80 }));
+    expect(result.pnlPercentage).toBeCloseTo(20);
+    const script = buildPage().match(/<script>([\s\S]*)<\/script>/)![1];
+    const source = script.slice(
+      script.indexOf("function evaluateExitStrategy"),
+      script.indexOf("const findTurnEvent"),
+    );
+    const browser = Function(source + ";return evaluateExitStrategy")();
+    expect(browser(short, market({ markPrice: 80 })).pnl).toBeCloseTo(20);
+  });
   it("calculates Wilder ATR from true ranges", () => {
     const candles = [
       { high: 10, low: 8, close: 9 },

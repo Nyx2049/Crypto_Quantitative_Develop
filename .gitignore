@@ -50,3 +50,5 @@ dist/
 .dev.vars
 coverage/
 .npm-cache/
+test-results/
+playwright-report/
