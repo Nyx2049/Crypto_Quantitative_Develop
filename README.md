@@ -6,7 +6,9 @@
 
 线上地址：
 
-<https://binance-ema99-scanner.ema99-scanner-cw2046.workers.dev>
+<https://binance-ema99-scanner.binance-ema99-scanner.workers.dev/>
+
+2026-09-09 已在当前授权的 Cloudflare 账号重新部署。旧地址不再作为本仓库的更新目标。持仓保存在浏览器对应网站的数据中；更换网址不会自动迁移持仓，可在旧站点点击“分享持仓”，将分享链接的域名换成上述新域名并保留完整 `#positions=...` 片段，再打开导入。
 
 ## 候选模块
 
